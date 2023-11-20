@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+<f:view>
+    <h:head>
+        <title>Teachers</title>
+    </h:head>
+    <h:body>
+        <h:form id="add_teacher">
+            <h:panelGrid columns="2">
+                <p:outputLabel for="tname" value="Name:"/>
+                <p:inputText id="tname" value="#{teacherBean.teacher.name}"/>
+                <p:outputLabel for="texp" value="Exp:"/>
+                <p:spinner id="texp" value="#{teacherBean.teacher.experience}"/>
+            </h:panelGrid>
+            <p:commandButton styleClass="rounded-button" icon="pi pi-plus" value="Add new"
+                actionListener="#{teacherBean.add()}" update=":add_teacher :big:table" />
+        </h:form>
+        <h:form id="big">
+        <p:dataTable value="#{teacherBean.teachers}" var="t" id="table">
+            <p:column headerText="#">
+                #{t.id}
+            </p:column>
+            <p:column headerText="Name">
+                #{t.name}
+            </p:column>
+            <p:column headerText="Experience">
+                #{t.experience}
+            </p:column>
+            <p:column headerText="E">
+                <p:commandButton update=":dialogs:edit" styleClass="ui-button-info rounded-button"
+                                 icon="pi pi-pencil" value="Edit"
+                                 process="@this" oncomplete="PF('editTeacherDialog').show()">
+                    <f:setPropertyActionListener value="#{t}" target="#{teacherBean.teacher}"/>
+                </p:commandButton>
+            </p:column>
+            <p:column headerText="X">
+                <p:commandButton update=":dialogs:confirm" styleClass="ui-button-danger rounded-button"
+                                 icon="pi pi-trash" value="Delete" process="@this"
+                                 oncomplete="PF('deleteTeacherDialog').show()">
+                    <f:setPropertyActionListener value="#{t}" target="#{teacherBean.teacher}"/>
+                </p:commandButton>
+            </p:column>
+        </p:dataTable>
+        </h:form>
+        <h:form id="dialogs">
+            <p:confirmDialog id="confirm" widgetVar="deleteTeacherDialog" showEffect="fade" width="300"
+                             header="Confirm delete" severity="warn"
+                             message="Delete teacher: #{teacherBean.teacher.name} ?">
+                <p:commandButton value="Yes" icon="pi pi-check" actionListener="#{teacherBean.delete()}"
+                                 process="@this" update=":big:table" global="false"
+                                 onclick="PF('deleteTeacherDialog').hide()"/>
+                <p:commandButton value="No" icon="pi pi-times" styleClass="ui-button-secondary"
+                                 onclick="PF('deleteTeacherDialog').hide()"/>
+            </p:confirmDialog>
+            <p:dialog header="Edit Teacher" showEffect="fade" modal="true" widgetVar="editTeacherDialog">
+                <p:outputPanel id="edit" styleClass="ui-fluid">
+                    <p:panelGrid columns="2">
+                        <p:outputLabel value="Name:" for="teacherName"/>
+                        <p:inputText id="teacherName" value="#{teacherBean.teacher.name}"/>
+                        <p:outputLabel value="Exp:" for="teacherExp"/>
+                        <p:spinner id="teacherExp" value="#{teacherBean.teacher.experience}"/>
+                    </p:panelGrid>
+                </p:outputPanel>
+                <f:facet name="footer">
+                    <p:commandButton value="Update" update=":big:table" actionListener="#{teacherBean.update()}"
+                                     icon="pi pi-check" styleClass="rounded-button ui-button-outlined"
+                                     onclick="PF('editTeacherDialog').hide()"/>
+                    <p:commandButton value="Cancel" styleClass="rounded-button ui-button-outlined ui-button-secondary"
+                                     icon="pi pi-times" onclick="PF('editTeacherDialog').hide()"/>
+                </f:facet>
+            </p:dialog>
+        </h:form>
+    </h:body>
+</f:view>
+</html>
